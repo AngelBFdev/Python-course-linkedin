@@ -9,4 +9,5 @@ def main():
 def message():
     print('This is python version {}'.format(platform.python_version()))
 
+# This says, that if it runs from here, to execute main function
 if __name__ == '__main__': main()
