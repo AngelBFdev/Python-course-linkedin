@@ -13,6 +13,8 @@ def message():
         print('line 3')     #This is another comment
     else:
         print('not true')
-
+# This will print line 4 before everything
+# because it's outside the function
+print ('line 4')
 # This says, that if it runs from here, to execute main function
 if __name__ == '__main__': main()
