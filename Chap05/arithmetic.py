@@ -5,4 +5,6 @@ x = 5
 y = 3
 z = x + y
 
+# You can save negative variables
+z=-z
 print(f'result is {z}')
