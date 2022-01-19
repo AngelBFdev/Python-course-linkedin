@@ -10,3 +10,10 @@ if a and b:
     print('expression is true')
 else:
     print('expression is false')
+
+# boolean operators
+# and: both values are true
+# or: one of the values is true
+# not: the value is not true
+# in: check if is in a collection (arrays)
+# is: check if are the same
