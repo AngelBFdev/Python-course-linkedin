@@ -6,11 +6,13 @@ def main():
         print(i, end = ' ')
     print()
 
+# range including stop value (25 in this case)
 def inclusive_range(*args):
+    # len is length
     numargs = len(args)
     start = 0
     step = 1
-    
+
     # initialize parameters
     if numargs < 1:
         raise TypeError(f'expected at least 1 argument, got {numargs}')
@@ -25,6 +27,8 @@ def inclusive_range(*args):
     # generator
     i = start
     while i <= stop:
+        # yield continues adding values to
+        # return
         yield i
         i += step
 

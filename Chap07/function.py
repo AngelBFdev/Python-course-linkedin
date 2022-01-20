@@ -6,5 +6,8 @@ def main():
 
 def kitten():
     print('Meow.')
+    # You need to put dict in order to
+    # return a dictionary
+    return dict(Buffy = 'meow', Zilla = 'grr', Angel = 'rawr')
 
 if __name__ == '__main__': main()

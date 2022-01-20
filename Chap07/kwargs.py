@@ -7,6 +7,9 @@ def main():
 def kitten(**kwargs):
     if len(kwargs):
         for k in kwargs:
+            # k is Buffy
+            # kwargs[k] calls the value of Buffy
+            # in the dictionary
             print('Kitten {} says {}'.format(k, kwargs[k]))
     else: print('Meow.')
 
