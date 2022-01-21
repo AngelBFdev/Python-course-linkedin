@@ -36,4 +36,5 @@ print('the number is {:x}'.format(y))
 # traduce to Binary
 print('the number is {:b}'.format(y))
 
-
+# You can find more information in the
+# documentation of format String Syntax
