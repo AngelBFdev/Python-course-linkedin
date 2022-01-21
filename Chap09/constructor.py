@@ -2,6 +2,7 @@
 # Copyright 2009-2017 BHG http://bw.org/
 
 class Animal:
+    # __init__ is the name to make a constructor
     def __init__(self, type, name, sound):
         self._type = type
         self._name = name
