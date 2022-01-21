@@ -8,6 +8,9 @@ class Animal:
         self._sound = kwargs['sound'] if 'sound' in kwargs else 'meow'
 
     def type(self, t = None):
+        # if you send a value to the method
+        # it would set it as the new _type
+        # value
         if t: self._type = t
         return self._type
 
@@ -19,6 +22,10 @@ class Animal:
         if s: self._sound = s
         return self._sound
 
+    # More information at python documentation
+    # Data model
+    # __str__ runs automatically if you print
+    # the object
     def __str__(self):
         return f'The {self.type()} is named "{self.name()}" and says "{self.sound()}".'
 

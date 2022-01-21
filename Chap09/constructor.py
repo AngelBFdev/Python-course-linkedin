@@ -4,6 +4,8 @@
 class Animal:
     # __init__ is the name to make a constructor
     def __init__(self, type, name, sound):
+        # variables need to start with _ at
+        # the begining of the name like _type
         self._type = type
         self._name = name
         self._sound = sound
