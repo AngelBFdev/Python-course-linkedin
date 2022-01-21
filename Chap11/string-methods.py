@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Copyright 2009-2017 BHG http://bw.org/
 
 # All capital letters
 print('Hello, Wold.'.upper())

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Copyright 2009-2017 BHG http://bw.org/
 
 # Method that print backwards
 # More info in: Chap09/string.py
