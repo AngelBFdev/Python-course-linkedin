@@ -13,13 +13,15 @@ class numwords():
         return a number as words,
         e.g., 42 becomes 'forty-two'
     '''
+
+    # dictionary for each segment of a number
     _words = {
         'ones': (
             'oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'
         ), 'tens': (
             '', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'
         ), 'teens': (
-            'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' 
+            'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
         ), 'quarters': (
             'o\'clock', 'quarter', 'half'
         ), 'range': {
@@ -31,7 +33,7 @@ class numwords():
     _oor = 'OOR'    # Out Of Range
 
     def __init__(self, n):
-        self._number = n;
+        self._number = n
 
     def numwords(self, num = None):
         'Return the number as words'
@@ -41,7 +43,7 @@ class numwords():
             s += self._words['misc']['minus'] + ' '
             n = abs(n)
         if n < 10:          # single-digit numbers
-            s += self._words['ones'][n]  
+            s += self._words['ones'][n]
         elif n < 20:        # teens
             s += self._words['teens'][n - 10]
         elif n < 100:       # tens
@@ -96,16 +98,27 @@ class saytime(numwords):
     def words(self):
         h = self._hour
         m = self._min
-        
+
         if h > 23: return self._oor     # OOR errors
         if m > 59: return self._oor
 
-        sign = self._specials['past']        
+        # set the special dictionary to past
+        sign = self._specials['past']
+
+        # if it's over 30 min
         if self._min > 30:
+            # set the special dictionary to til
             sign = self._specials['til']
+
+            # add 1 hour since it's going to say the remaining
+            # time to the next hour: 30 til midnight
             h += 1
+
+            # get the remaining minutes
             m = 60 - m
+        # instead of 24 it's 0
         if h > 23: h -= 24
+        # to get format of 12 pm and am
         elif h > 12: h -= 12
 
         # hword is the hours word)
@@ -114,11 +127,18 @@ class saytime(numwords):
         else: hword = self.numwords(h)
 
         if m == 0:
+            # just return noon or midnight
             if h in (0, 12): return hword   # for noon and midnight
+
+            # self._words['quarters'][m] is equal to o'clock
             else: return "{} {}".format(self.numwords(h), self._words['quarters'][m])
         if m % 15 == 0:
-            return "{} {} {}".format(self._words['quarters'][m // 15], sign, hword) 
-        return "{} {} {}".format(self.numwords(m), sign, hword) 
+            # self._words['quarters'][m // 15] equal to 'quarter' or 'half'
+            # example: quarter til midnight
+            # example: half past one
+            return "{} {} {}".format(self._words['quarters'][m // 15], sign, hword)
+        # example: fourteen past two
+        return "{} {} {}".format(self.numwords(m), sign, hword)
 
     def digits(self):
         'return the traditionl time, e.g., 13:42'
@@ -132,36 +152,54 @@ class saytime_t(saytime):   # wrapper for saytime to use time object
         self.time_t()
 
 def main():
+    # runs if you give an argument
     if len(sys.argv) > 1:
+        # if it's equal to test
         if sys.argv[1] == 'test':
             test()
         else:
+            # if the argument is 10:30 would run
+            # method words from saytime and print
+            # half past ten
             try: print(saytime(*(sys.argv[1].split(':'))).words())
+
+            # Error if you give invalid argument
             except TypeError: print('Invalid time ({})'.format(sys.argv[1]))
     else:
+        # if no argument print current time
         print(saytime_t().words())
 
 def test():
     st = saytime()
     print('\nnumbers test:')
     list = (
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 19, 20, 30, 
-        50, 51, 52, 55, 59, 99, 100, 101, 112, 900, 999, 1000 
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 19, 20, 30,
+        50, 51, 52, 55, 59, 99, 100, 101, 112, 900, 999, 1000
     )
     for l in list:
+        # set the number in the saytime object by calling
+        # the method number from the saytime object
         st.number(l)
+        # print the number with words and the number itself
+        # using the numwords
+        # example: 1 one
         print(l, st.numwords())
 
     print('\ntime test:')
     list = (
         (0, 0), (0, 1), (11, 0), (12, 0), (13, 0), (12, 29), (12, 30),
-        (12, 31), (12, 15), (12, 30), (12, 45), (11, 59), (23, 15), 
+        (12, 31), (12, 15), (12, 30), (12, 45), (11, 59), (23, 15),
         (23, 59), (12, 59), (13, 59), (1, 60), (24, 0)
     )
     for l in list:
+        # call the method time and set hour and minutes
+        # in the object saytime
         st.time(*l)
+        # use the method digits, example: 12:00
+        # use the method words, example: midnight
         print(st.digits(), st.words())
-    
+
+    # sending no value set it to localtime
     st.time_t() # set time to now
     print('\nlocal time is ' + st.words())
 
