@@ -14,7 +14,7 @@ class bwDB:
         """
             db = bwDB( [ table = ''] [, filename = ''] )
             constructor method
-                table is for CRUD methods 
+                table is for CRUD methods
                 filename is for connecting to the database file
         """
         # see filename @property decorators below
@@ -32,6 +32,7 @@ class bwDB:
                 params is list containing parameters
             returns nothing
         """
+        # example: execute(DROP TABLE IF EXISTS foo)
         self._db.execute(sql, params)
         self._db.commit()
 
@@ -109,17 +110,23 @@ class bwDB:
                 rec is a dict with key/value pairs corresponding to table schema
             omit id column to let SQLite generate it
         """
+        # save the keys in order
         klist = sorted(rec.keys())
+        # save the values. Example rec[number] = 'one'
         values = [rec[v] for v in klist]  # a list of values ordered by key
         q = 'INSERT INTO {} ({}) VALUES ({})'.format(
-            self._table,
-            ', '.join(klist),
-            ', '.join('?' * len(values))
+            self._table,                    # foo
+            ', '.join(klist),               # string, number
+            ', '.join('?' * len(values))    # print a ? for each value, and join them with ', '
         )
+        # set the value ? to the real values
         c = self._db.execute(q, values)
+        # return a cursor
         return c.lastrowid
 
     def insert(self, rec):
+        # call method insert_nocommit
+        # send string: 'one', number: 42
         lastrowid = self.insert_nocommit(rec)
         self._db.commit()
         return lastrowid
@@ -131,21 +138,30 @@ class bwDB:
                 id is the value of the id column for the row to be updated
                 rec is a dict with key/value pairs corresponding to table schema
         """
+        # save keys
         klist = sorted(rec.keys())
+        # save the values
         values = [rec[v] for v in klist]  # a list of values ordered by key
 
+        # Enumerate the keys
         for i, k in enumerate(klist):  # don't udpate id
             if k == 'id':
-                del klist[i]
-                del values[i]
+                del klist[i]    # deletes the key if it's name is id
+                del values[i]   # deletes the value
 
         q = 'UPDATE {} SET {} WHERE id = ?'.format(
             self._table,
-            ',  '.join(map(lambda s: '{} = ?'.format(s), klist))
+            ',  '.join(map(lambda s: '{} = ?'.format(s), klist))    # map all the keys and apply the join with ','
+            # example: string = ?, number = ?
         )
+        # Example:
+        # Befores: UPDATE {} SET {} WHERE id = ?
+        # After: UPDATE foo SET string = 'one', number = 32 WHERE id = 1
         self._db.execute(q, values + [recid])
 
     def update(self, recid, rec):
+        # call update_nocommit method
+        # need id and new record
         self.update_nocommit(recid, rec)
         self._db.commit()
 
@@ -169,6 +185,8 @@ class bwDB:
         """
         query = f'SELECT COUNT(*) FROM {self._table}'
         c = self._db.execute(query)
+        # fetchone() return the first row of a query
+        # fetchone()[0] return the first column of the first row of a query
         return c.fetchone()[0]
 
     # filename property
@@ -179,6 +197,7 @@ class bwDB:
     @_filename.setter
     def _filename(self, fn):
         self._dbfilename = fn
+        # connect to the database
         self._db = sqlite3.connect(fn)
         self._db.row_factory = sqlite3.Row
 
@@ -193,8 +212,11 @@ class bwDB:
 
 def test():
     fn = ':memory:'  # in-memory database
+
+    # name of the table
     t = 'foo'
 
+    # Record for the database
     recs = [
         dict(string='one', number=42),
         dict(string='two', number=73),
@@ -204,42 +226,55 @@ def test():
     # -- for file-based database
     # try: os.stat(fn)
     # except: pass
-    # else: 
+    # else:
     #     print('Delete', fn)
     #     os.unlink(fn)
 
     print('bwDB version', __version__)
 
     print(f'Create database file {fn} ...', end='')
+
+    # send the file name and the table
+    # name to the function bwDB
     db = bwDB(filename=fn, table=t)
     print('Done.')
 
     print('Create table ... ', end='')
+
+    # send the query to the method sql_do
     db.sql_do(f' DROP TABLE IF EXISTS {t} ')
     db.sql_do(f' CREATE TABLE {t} ( id INTEGER PRIMARY KEY, string TEXT, number INTEGER ) ')
     print('Done.')
 
     print('Insert into table ... ', end='')
     for r in recs:
+
+        # call insert method
         db.insert(r)
+
     print('Done.')
 
+    # call the method countrecs()
     print(f'There are {db.countrecs()} rows')
 
     print('Read from table')
+    # call method getrecs()
     for r in db.getrecs():
         print(dict(r))
 
     print('Update table')
+    # call method update
     db.update(2, dict(string='TWO'))
     print(dict(db.getrec(2)))
 
     print('Insert an extra row ... ', end='')
     newid = db.insert({'string': 'extra', 'number': 512})
     print(f'(id is {newid})')
+    # call the method getrec() to get an specific record
     print(dict(db.getrec(newid)))
     print(f'There are {db.countrecs()} rows')
     print('Now delete it')
+    # call the method delete()
     db.delete(newid)
     print(f'There are {db.countrecs()} rows')
     for r in db.getrecs():
